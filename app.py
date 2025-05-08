@@ -104,8 +104,22 @@ with tab3:
                 st.error("El archivo debe tener columnas llamadas 'numero' y 'mensaje'")
             else:
                 st.success("Archivo cargado correctamente.")
+
+                # Preparar números y enlaces
                 df['numero'] = df['numero'].astype(str).apply(lambda x: "+57" + x.strip() if not x.startswith("+") else x)
                 df['link'] = df.apply(lambda row: f"https://wa.me/{row['numero'].replace('+', '')}?text={urllib.parse.quote(str(row['mensaje']))}", axis=1)
-                st.write(df[["numero", "mensaje", "link"]])
+
+                # Mostrar tabla
+                st.write("### Vista previa:")
+                st.dataframe(df[["numero", "mensaje"]])
+
+                st.write("### Abrir enlaces de WhatsApp:")
+
+                # Mostrar botones con enlaces
+                for i, row in df.iterrows():
+                    st.markdown(
+                        f"📱 [{row['numero']} - Abrir WhatsApp]({row['link']})", unsafe_allow_html=True
+                    )
         except Exception as e:
             st.error(f"Ocurrió un error al leer el archivo: {e}")
+
